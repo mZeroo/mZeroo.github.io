@@ -1,0 +1,473 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title> Snake </title>
+<meta name="author" content="">
+<meta name="keywords" content="">
+<meta name="description" content="">
+</head>
+
+<body>
+<script>
+
+var App, Game, Map, Snake, Food, Utils, Controller, Tally;
+
+var GRID_SIZE = 10, WIDTH = 300, HEIGHT = 300, FPS = 3, MAX_GROW_LENGTH = 3;
+
+var toString = Object.prototype.toString;
+
+Utils = {
+  clone: function(obj) {
+    var ret;
+
+    if (toString.call(obj) === '[object Object]') {
+      ret = {};
+      for (var k in obj) {
+        ret[k] = arguments.callee(obj[k]);
+      }
+    } else
+    if (toString.call(obj) === '[object Array]') {
+      ret = [];
+      for (var i = 0, len = obj.length; i < len; i++) {
+        ret.push(arguments.callee(obj[i]));
+      }
+    } else {
+      ret = obj;
+    }
+
+    return ret;
+  },
+  style: function(elem, props) {
+    for (var prop in props) {
+      elem.style[prop] = props[prop];
+    }
+  },
+  setAlign: function(elem, width, height) {
+    this.style(elem, {
+      position: 'absolute',
+      top: '50%',
+      left: '50%',
+      marginTop: -height / 2 + 'px',
+      marginLeft: -width / 2 + 'px'
+    });
+  },
+  crash: function(a, b) {
+    var x = Math.abs((a.x + a.w / 2) - (b.x + b.w / 2)) < ((a.w + b.w) / 2);
+    var y = Math.abs((a.y + a.h / 2) - (b.y + b.h / 2)) < ((a.h + b.h) / 2);
+
+    if (x && y) {
+      return true;
+    }
+    
+    return false;
+  },
+  random: function(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+  }
+};
+
+Map = function(width, height) {
+  var mapElem = document.createElement('div');
+
+  Utils.style(mapElem, {
+    width: width + 'px',
+    height: height + 'px',
+    border: '1px solid #BFBFBF',
+    backgroundColor: '#FEFEFE'
+  });
+  Utils.setAlign(mapElem, width, height);
+
+  document.body.appendChild(mapElem);
+
+  this.width = width;
+  this.height = height;
+}
+
+Map.prototype = {
+  constructor: Map,
+
+  checkCrash: function(snake) {
+    if (snake.x < 0 || snake.x > this.width - snake.w ||
+        snake.y < 0 || snake.y > this.height - snake.h) {
+      return true;    
+    }
+
+    return false;
+  }
+};
+
+Snake = function Snake(game, ctx) {
+  this.ctx = ctx;
+  this.game = game;
+  this.length = 3;
+  this.direction = 'right';
+  this.nextDirection = 'right';
+  this.footprint = [];
+  this.position = [{x: 80, y: 100, w: GRID_SIZE, h: GRID_SIZE}];
+
+  this.grow(this.length - 1);
+}
+
+Snake.prototype = {
+  consturctor: Snake,
+
+  draw: function() {
+    var ctx = this.ctx;
+    this.position.forEach(function(item, i) {
+      ctx.fillStyle = '#666';
+      ctx.fillRect(item.x, item.y, item.w, item.h);
+    });
+  },
+
+  advance: function() {
+    var foot = this.position.pop(),
+      head = this.position[0];
+
+    this.direction = this.nextDirection;
+    this.footprint.unshift(Utils.clone(foot));
+    this.footprint = this.footprint.slice(0, MAX_GROW_LENGTH);
+
+    switch(this.direction) {
+      case 'left':
+        foot.x = head.x - head.w;
+        foot.y = head.y;
+        break;
+      case 'right':
+        foot.x = head.x + head.w;
+        foot.y = head.y;
+        break;
+      case 'top':
+        foot.x = head.x;
+        foot.y = head.y - head.h;
+        break;
+      case 'bottom':
+        foot.x = head.x;
+        foot.y = head.y + head.h;
+        break;
+    }
+
+    this.position.unshift(foot);
+  },
+
+  setDirection: function(newDirection) {
+    var hor = /left|right/,
+      ver = /top|bottom/;
+
+    if ((hor.test(this.direction) && ver.test(newDirection)) ||
+        (ver.test(this.direction) && hor.test(newDirection))) {
+      this.nextDirection = newDirection;
+    }
+  },
+
+  grow: function(len) {
+    var position = this.position,
+      footprint = this.footprint,
+      i,x, y, lastPos;
+
+    for (i = 0; i < len; i++) {
+      lastPos = footprint[i];
+
+      if (!lastPos) {
+        lastPos = position[position.length - 1];
+
+        switch (this.direction) {
+          case 'left':
+            x = lastPos.x + lastPos.w;
+            y = lastPos.y;
+            break;
+          case 'right':
+            x = lastPos.x - lastPos.w;
+            y = lastPos.y;
+            break;
+          case 'top':
+            x = lastPos.x;
+            y = lastPos.y + lastPos.h;
+            break;
+          case 'bottom':
+            x = lastPos.x;
+            y = lastPos.y - lastPos.h;
+            break;
+        }
+      }
+      else {
+        x = lastPos.x;
+        y = lastPos.y;
+      }
+      
+      position.push({
+        x: x,
+        y: y,
+        w: GRID_SIZE,
+        h: GRID_SIZE
+      });
+    }  
+  },
+
+  checkCrash: function(obj) {
+    var ret = false,
+      head = this.position[0];
+
+    this.position.forEach(function(item, i) {
+      if (!i) return;
+      if (Utils.crash(head, item)) {
+        ret = true;
+      }
+    });
+
+    return ret;
+  },
+
+  inPosition: function(coord) {
+    var ret = false;
+
+    this.position.forEach(function(item, i) {
+      if (item.x === coord.x && item.y === coord.y) {
+        ret = true;
+      }
+    });
+
+    return ret;
+  }
+};
+
+Food = (function() {
+
+  function _create() {
+    this.position.push(new Apple(this.game, this.ctx));
+  }
+
+  function _remove(index) {
+    this.position.splice(index, 1);
+  }
+
+  function Apple(game, ctx) {
+    var coord = game.createCoord();
+
+    this.ctx = ctx;
+    this.scores = 1;
+    this.w = GRID_SIZE;
+    this.h = GRID_SIZE;
+    this.x = coord.x;
+    this.y = coord.y;
+    this.r = GRID_SIZE / 2;
+  }
+
+  Apple.prototype = {
+    constructor: Apple,
+
+    draw: function() {
+      var ctx = this.ctx;
+      ctx.fillStyle = 'green';
+      ctx.beginPath();
+      ctx.arc(this.x + this.r, this.y + this.r, this.r, 0, Math.PI * 2, true);
+      ctx.fill();
+    }
+  }
+  
+  function Food(game, ctx) {
+    this.game = game;
+    this.ctx = ctx;
+    this.position = [];
+
+    _create.call(this);
+  }
+
+  Food.prototype = {
+    constructor: Food,
+
+    draw: function() {
+      this.position.forEach(function(item, i) {
+        item.draw();
+      });
+    },
+
+    checkCrash: function(snake) {
+      var ret = false,
+        self = this;
+
+      this.position.forEach(function(item, i) {
+        if (Utils.crash(snake, item)) {
+          ret = item.scores;
+          _remove.call(self, i);
+          _create.call(self);
+        }
+      });
+
+      return ret;
+    }
+  };
+
+  return Food;
+}());
+
+Tally = function() {
+  
+}
+
+Tally.prototype = {
+
+};
+
+Controller = (function() {
+  var _handleKeyDown;
+
+  function _init() {
+    var self = this;
+
+    _handleKeyDown = function(e) {
+      switch(e.keyCode) {
+        case 37:
+          self.game.Snake.setDirection('left');
+          break;
+        case 38:
+          self.game.Snake.setDirection('top');
+          break;
+        case 39:
+          self.game.Snake.setDirection('right');
+          break;
+        case 40:
+          self.game.Snake.setDirection('bottom');
+          break;
+        case 13:
+          if (self.game.status === 'gameover') {
+            self.game.start();
+            _unbind();
+          }
+          break;
+      }
+    }
+
+    _bind();
+  }
+
+  function _bind() {
+    document.body.addEventListener('keydown', _handleKeyDown, false);
+  }
+
+  function _unbind() {
+    document.body.removeEventListener('keydown', _handleKeyDown, false);    
+  }
+
+  function Controller(game) {
+    this.game = game;
+    this.game.status = 'playing';
+
+    _init.call(this);
+  }
+
+  return Controller;
+}());
+
+Game = (function() {
+
+  function _createGameCanvas(width, height) {
+    this.canvas = document.createElement('canvas');
+    this.canvas.width = width;
+    this.canvas.height = height;
+    this.ctx = this.canvas.getContext('2d');
+
+    Utils.setAlign(this.canvas, width, height);
+    Utils.style(this.canvas, {
+      'border': '1px solid #ccc'
+    });
+
+    document.body.appendChild(this.canvas);
+  }
+
+  function _getRandomPosition() {
+    return {
+      x: Utils.random(0, Math.floor(WIDTH / GRID_SIZE)) * GRID_SIZE - GRID_SIZE,
+      y: Utils.random(0, Math.floor(HEIGHT / GRID_SIZE)) * GRID_SIZE - GRID_SIZE,
+    }
+  }
+  
+  function Game() {
+    this.init();
+  }
+
+  Game.prototype = {
+    constructor: Game,
+      
+    init: function() {
+      this.Map = new Map(WIDTH, HEIGHT);
+      _createGameCanvas.call(this, WIDTH, HEIGHT);
+    },
+
+    start: function() {
+      this.Snake = new Snake(this, this.ctx);
+      this.Foot = new Food(this, this.ctx);
+      this.Controller = new Controller(this);
+    },
+
+    over: function() {
+      this.ctx.font = '50px sans-serif';
+      this.ctx.textAlign = 'center';
+      this.ctx.fillStyle = 'red';
+      this.ctx.fillText('Game Over', this.Map.width / 2, this.Map.height / 2);
+      this.status = 'gameover';
+      return;
+    },
+
+    draw: function() {
+      var scores;
+
+      if (this.status === 'pause' || this.status === 'gameover') {
+        return;
+      }
+
+      this.Snake.advance();
+
+      if (this.Map.checkCrash(this.Snake.position[0]) || this.Snake.checkCrash()) {
+        this.over();
+        return;
+      }
+      
+      if ((scores = this.Foot.checkCrash(this.Snake.position[0])) !== false) {
+        this.Snake.grow(scores);
+      }
+
+      this.ctx.clearRect(0, 0, WIDTH, HEIGHT);
+      this.Snake.draw();
+      this.Foot.draw();
+    },
+
+    createCoord: function() {
+      var coord = _getRandomPosition();
+
+      if (this.Snake.inPosition(coord)) {
+        return arguments.callee.apply(this, arguments);
+      }
+      
+      return coord;
+    }
+  };
+
+  return Game;
+}());
+
+App = (function() {
+
+  SnakeGame = null;
+
+  function _loop() {
+    SnakeGame.draw();
+    setTimeout(arguments.callee, 1000/FPS);
+  }
+
+  function init() {
+    SnakeGame = new Game();
+    SnakeGame.start();
+
+    _loop();
+  }
+  
+  return {
+    init: init
+  }
+}());
+
+window.onload = App.init;
+</script>
+</body>
+</html>

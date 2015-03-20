@@ -1,0 +1,47 @@
+---
+layout: default
+---
+<style>
+article {
+  margin:30px auto 0;
+  color:#666;
+}
+article h1 {
+  text-align:center;
+  font-size:28px;
+  font-weight:bold;
+  line-height:2;
+  color:black;
+}
+article h2 {
+  font-weight:bold;
+  line-height:2;
+  color:black;
+  font-size:20px;
+  margin-top:10px;
+}
+article p {
+  margin:12px 0;
+  text-indent:2em;
+  font-size:18px;
+  line-height:1.8;
+}
+article p b {
+  font-weight:bold;
+  color:#333;
+}
+article ol {
+  list-style:decimal;
+  margin-left:25px;
+  font-size:16px;
+  line-height:1.6;
+}
+article p code {
+  background:#333;
+  color: white;
+}
+</style>
+<article>
+  <h1>{{ page.title }}</h1>
+  {{ content }}
+</article>

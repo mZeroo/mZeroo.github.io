@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script id="allmobilize" charset="utf-8" src="http://a.yunshipei.com/0c2fce5114154786ea49e9caad5bd7cd/allmobilize.min.js"></script>
+<meta http-equiv="Cache-Control" content="no-siteapp" /><link rel="alternate" media="handheld" href="#" />
+<meta charset="utf-8">
+<title>{{ page.title }}</title>
+{% if page.description %}
+<meta name="description" content="{{ page.description }}" />
+{% endif %}
+{% if page.keywords %}
+<meta name="keywords" content="{{ page.keywords }}" />
+{% endif %}
+<link rel="stylesheet" href="/static/css/base-common.css" />
+{% if page.styles %}
+{% for style in page.styles %}
+<link rel="stylesheet" href="/static/css/{{ style }}.css" />
+{% endfor %}
+{% endif %}
+<!--[if lt IE 9]>
+<script src="/static/js/html5.js"></script>
+<![endif]-->
+</head>
+
+<body>
+<header>
+  <nav class="fn-clear">
+    <a href="/" id="logo" class="fn-left">Table's</a>
+    <a href="/#anchor-article" id="link-article" class="fn-left">Article</a>
+    <a href="/#anchor-project" id="link-project" class="fn-left">Project</a>
+    <a href="https://github.com/taberhuang" class="fn-left">Github</a>
+    <a href="http://www.scoop.it/u/taberh" class="fn-left">Scoop.it</a>
+    <a href="/#anchor-aboutme" id="link-aboutme" class="fn-right">About</a>
+  </nav>
+</header>
+
+<div id="main">
+{{ content }}
+</div>
+
+<footer>
+  <p>Build by <a href="https://github.com/mojombo/jekyll/wiki" target="_blank">Jekyll</a></p>
+</footer>
+
+<script type="text/javascript">
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-23358884-1']);
+_gaq.push(['_trackPageview']);
+(function() {
+  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+</script>
+</body>
+</html>
