@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  程序员的职业素读书笔记
+title:  [读书笔记] 程序员的职业
 category: 阅读
 tags: 读书笔记
 keywords: 专业主义
