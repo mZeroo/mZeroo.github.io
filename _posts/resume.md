@@ -7,7 +7,7 @@ keywords: 故障恢复, 问题定位
 description: 解决故障的一些感想
 ---
 
-* Page: http//:javait.tk
+* Page: http://mzeroo.github.io/
 * Company: 
 	* 2013.3 - 2015.3 [Hulu](www.hulu.com)
 	* 2015.4 - ? [美团](www.meituan.com)
