@@ -102,11 +102,33 @@ body, html {
   line-height: 1.42857143;
 }
 #content {
-  font-size: 14px;
+  font-size: 16px;
+  line-height: 2.2;
 }
-#content h2, h3 {
-  line-height: 2;
+#content h2, h3, h4, h5 {
+  line-height: 2.4;
 }
+
+#content h2 {
+    font-size: 24px;
+}
+
+#content h3 {
+    font-size: 22px;
+}
+
+#content h4 {
+    font-size: 20px;
+}
+
+#content h5 {
+    font-size: 18px;
+}
+
+#content h6, h7, h8, h9 {
+    font-size: 16px;
+}
+
 #content table {
   border: 1px;
 bordercolor: red;
@@ -126,4 +148,9 @@ blockquote p {
 .show-commend {
   width: 100%;
   margin-bottom: 40px;
+}
+
+.highlight {
+  margin-top: 20px;
+  margin-bottom: 20px;
 }
