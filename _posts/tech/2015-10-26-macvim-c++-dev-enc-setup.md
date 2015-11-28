@@ -2,8 +2,8 @@
 layout: post
 title: MacVim C++ 开发环境设置
 category: 技术
-tags: C++
-keywords: MavVim, C++
+tags: 工具
+keywords: MacVim, C++
 description: 
 ---  
 
@@ -11,14 +11,18 @@ description:
 
 
 * [macvim](https://github.com/b4winckler/macvim) : vim for mac
-* [Ag](https://github.com/ggreer/the_silver_searcher) : a better grep, ag.vim 插件依赖于它
 * [Vundle](https://github.com/VundleVim/Vundle.vim): vim 插件安装管理插件
 * [YouCompleteMe](https://github.com/Valloric/YouCompleteMe): 代码补全插件
 * [syntastic](https://github.com/scrooloose/syntastic#introduction): 语法分析和错误提示插件，可实时提示语法错误
 * [NERD_tree](https://github.com/scrooloose/nerdtree): 目录树插件
 * [command-t](https://github.com/wincent/Command-T): 快速导航定位文件插件
 * [vim-gitgutter](https://github.com/airblade/vim-gitgutter): vim git 插件，看文件修改情况
+* [Ag](https://github.com/ggreer/the_silver_searcher) : a better grep, ag.vim 插件依赖于它
 * [ag.vim](https://github.com/rking/ag.vim): 文本查找插件
+* [ctags](http://ctags.sourceforge.net/) 遍历源代码文件生成tags文件
+* [taglist](https://github.com/vim-scripts/taglist.vim): 显示函数列表
+* [a.vim](https://github.com/vim-scripts/a.vim): .h 和 .cpp 切换
+* 自动删除行为空格
 
 
 ## - 具体安装
@@ -131,6 +135,33 @@ YouCompleteMe 就安装完成了， 这时候打开 macvim 编辑 cpp 文件就�
 [Ag](https://github.com/ggreer/the_silver_searcher): 更好的 grep。
 ag.vim 就是它的一个 wrapper，[Git Repo](https://github.com/rking/ag.vim) 安装方法同上。
 
+#### 9) install ctags
+
+brew install ctags
+
+#### 10) install taglist
+
+	" add to ~/.vimrc
+	Bundle 'vim-scripts/taglist.vim'
+	let Tlist_Show_One_File=1     "不同时显示多个文件的tag，只显示当前文件的 
+	let Tlist_Exit_OnlyWindow=1   "如果taglist窗口是最后一个窗口，则退出vim  
+	let Tlist_Use_Right_Window = 1         "在右侧窗口中显示taglist窗口
+
+安装后，打开 vim， 输入 :Tlist 即可
+
+#### 11）自动删除行尾空格
+
+
+	fun! StripTrailingWhitespace()
+    	"Don't strip on these filetypes
+    	if &ft =~ 'markdown'
+        	return
+    	endif
+    	%s/\s\+$//e
+	endfun
+	autocmd BufWritePre * call StripTrailingWhitespace()
+
+添加到 .vimrc 就可以删除烦人的行尾空格了
 
 ## - 参考
 
