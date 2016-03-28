@@ -1,18 +1,17 @@
-
 ---
 layout: post
 title: Java 并发编程学习 - 线程
 category: 技术
 tags: Java
 keywords: Java, Concurrency, Thread
-description: 
+description:
 ---
 
 ### 1. 什么是线程？
-什么线程？关于线程的 [维基百科](https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&cd=2&cad=rja&uact=8&ved=0ahUKEwiru_Dn1-PLAhXjfHIKHTTtDlAQFggkMAE&url=https%3A%2F%2Fzh.wikipedia.org%2Fzh%2F%25E7%25BA%25BF%25E7%25A8%258B&usg=AFQjCNGkqeFdYVYwmBQgsunfkJPT1eIm_A&sig2=uQBRmsAwfXWpK-lsOCYGaw) 解释如下：  
+什么线程？关于线程的 [维基百科](https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&cd=2&cad=rja&uact=8&ved=0ahUKEwiru_Dn1-PLAhXjfHIKHTTtDlAQFggkMAE&url=https%3A%2F%2Fzh.wikipedia.org%2Fzh%2F%25E7%25BA%25BF%25E7%25A8%258B&usg=AFQjCNGkqeFdYVYwmBQgsunfkJPT1eIm_A&sig2=uQBRmsAwfXWpK-lsOCYGaw) 解释如下：
 
 
-```线程是操作系统能够进行运算调度的最小单位。它被包含在进程之中，是进程中的实际运作单位。一条线程指的是进程中一个单一顺序的控制流，一个进程中可以并发多个线程，每条线程并行执行不同的任务。在Unix System V及SunOS中也被称为轻量进程，但轻量进程更多指内核线程，而把用户线程称为线程。 线程是独立调度和分派的基本单位。```
+> 线程是操作系统能够进行运算调度的最小单位。它被包含在进程之中，是进程中的实际运作单位。一条线程指的是进程中一个单一顺序的控制流，一个进程中可以并发多个线程，每条线程并行执行不同的任务。在Unix System V及SunOS中也被称为轻量进程，但轻量进程更多指内核线程，而把用户线程称为线程。 线程是独立调度和分派的基本单位。
 
 如何理解线程是 CPU 调度的最小单位呢？简单来说一个 CPU 只能运行一个线程。线程由线程ID、程序计数器、寄存器集合和堆栈组成。线程自己不拥有系统资源，只拥有一点在运行中必不可少的资源，但它可与同属一个进程的其他线程共享进程所拥有的全部资源。
 
