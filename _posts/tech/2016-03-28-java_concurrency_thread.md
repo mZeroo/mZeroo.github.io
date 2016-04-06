@@ -225,7 +225,7 @@ holdsLock 可以检测当前线程是否持有某个特定对象的监视器锁�
 
 当我们想要停止或者取消一个线程正在执行的任务的时候，我们应该怎么做呢？ 从 Thread 提供的接口看来， 有两个看上去可以完成该功能的防范： stop 和 interrupt。
 
-###### stop
+###### 1. stop
 
 
 stop 的作用是强制停止一个正在运行的线程， 当时该函数已经不推荐使用了，这是为什么呢？在回答这个问题之前，首先我们来看一下调用 stop 停止一个线程的实现原理。先来看如下一个例子：
@@ -269,7 +269,7 @@ stop 的作用是强制停止一个正在运行的线程， 当时该函数已�
 
 关于为什么 stop 不推荐使用的详情可以参考：[Why stop, suspend, & resume of Thread are Deprecated](http://geekexplains.blogspot.com/2008/07/why-stop-suspend-resume-of-thread-are.html)
 
-###### interrupt
+###### 2. interrupt
 
 interrupt 在 [3.2.4 成员方法 Thread.interupt] 部分已经介绍了一部分，interrupt 其实是 java 引入的一种停止线程的**协商机制**。 “协商” 体现在 Thread 中可以选择合适的时机对 interupt 做出响应或者不作响应，这样用户可以自己保证数据的一致性前提下优雅的结束一个线程。 如上文所述一般情况下 interupt 只是设置线程的 interrupted status，我们在合适的时间判断 interrupted flag 做出响应即可。如下例：
 
