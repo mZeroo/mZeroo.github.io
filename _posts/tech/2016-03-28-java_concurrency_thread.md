@@ -31,7 +31,8 @@ description:
 
 ### 3. Java 线程
 #### 3.1 线程启动
-Java 中启动线程的方式主要有以下两种：
+Java 中启动线程的方式主要有以下两种：  
+
 继承：
         
         class MyThread extends Thread {
